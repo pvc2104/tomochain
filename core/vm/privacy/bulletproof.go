@@ -1183,7 +1183,7 @@ func MRPProve(values []*big.Int) (MultiRangeProof, error) {
 MultiRangeProof Verify
 Takes in a MultiRangeProof and verifies its correctness
 */
-func MRPVerify(mrp MultiRangeProof) bool {
+func MRPVerify(mrp *MultiRangeProof) bool {
 	m := len(mrp.Comms)
 	bitsPerValue := EC.V / m
 

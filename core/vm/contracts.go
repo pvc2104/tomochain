@@ -59,6 +59,7 @@ var PrecompiledContractsByzantium = map[common.Address]PrecompiledContract{
 	common.BytesToAddress([]byte{7}):  &bn256ScalarMul{},
 	common.BytesToAddress([]byte{8}):  &bn256Pairing{},
 	common.BytesToAddress([]byte{30}): &ringSignatureVerifier{},
+	common.BytesToAddress([]byte{40}): &bulletproofVerifier{},
 }
 
 // RunPrecompiledContract runs and evaluates the output of a precompiled contract.
@@ -362,6 +363,12 @@ func (c *bn256Pairing) Run(input []byte) ([]byte, error) {
 }
 
 type ringSignatureVerifier struct{}
+type bulletproofVerifier struct{}
+
+func (c *bulletproofVerifier) RequiredGas(input []byte) uint64 {
+	//the gas should depends on the ringsize
+	return 100000
+}
 
 func (c *ringSignatureVerifier) RequiredGas(input []byte) uint64 {
 	//the gas should depends on the ringsize
@@ -387,6 +394,23 @@ func (c *ringSignatureVerifier) Run(proof []byte) ([]byte, error) {
 	}
 	if !privacy.Verify(der) {
 		return []byte{}, errors.New("Fail to verify ring signature")
+	}
+	//h := crypto.Keccak256(proof)*/
+	/*b, _ := TestRingSignature()
+	if !b {
+		return []byte{}, errors.New("Fail to verify ring signature")
+	}*/
+	return []byte{}, nil
+}
+
+func (c *bulletproofVerifier) Run(proof []byte) ([]byte, error) {
+	mrp := new(privacy.MultiRangeProof)
+	if mrp.Deserialize(proof) != nil {
+		return []byte{}, errors.New("failed to deserialize bulletproofs")
+	}
+
+	if !privacy.MRPVerify(mrp) {
+		return []byte{}, errors.New("failed to verify bulletproof")
 	}
 	//h := crypto.Keccak256(proof)*/
 	/*b, _ := TestRingSignature()

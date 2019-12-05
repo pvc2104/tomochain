@@ -229,6 +229,7 @@ func Deserialize(r []byte) (*RingSignature, error) {
 			compressedKey := r[offset : offset+33]
 			offset += 33
 			compressedPubKey := DeserializeCompressed(sig.Curve, compressedKey)
+
 			sig.Ring[i][j] = compressedPubKey
 		}
 	}
