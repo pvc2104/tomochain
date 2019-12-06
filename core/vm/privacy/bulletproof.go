@@ -1185,7 +1185,7 @@ Takes in a MultiRangeProof and verifies its correctness
 */
 func MRPVerify(mrp *MultiRangeProof) bool {
 	m := len(mrp.Comms)
-	bitsPerValue := EC.V / m
+	EC = genECPrimeGroupKey(m * bitsPerValue)
 
 	//changes:
 	// check 1 changes since it includes all commitments
